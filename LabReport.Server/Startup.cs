@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using LabReport.Server.Models;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace LabReport.Server
 {
@@ -35,6 +36,11 @@ namespace LabReport.Server
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
+            });
+
             services.AddDbContext<LabReportServerContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("LabReportServerContext")));
         }
@@ -55,6 +61,11 @@ namespace LabReport.Server
             app.UseCookiePolicy();
 
             app.UseMvc();
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
         }
     }
 }

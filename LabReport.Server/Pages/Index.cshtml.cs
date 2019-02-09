@@ -20,12 +20,12 @@ namespace LabReport.Server.Pages
         }
 
         public IList<ReportItem> ReportItem { get;set; }
-
+        
         public async Task OnGetAsync()
         {
             ReportItem = await _context.ReportItem.ToListAsync();
         }
-
+        
         public async Task OnPostAsync(ReportItem newItem)
         {
             _context.ReportItem.Add(newItem);
