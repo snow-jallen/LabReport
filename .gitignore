@@ -261,3 +261,4 @@ __pycache__/
 *.pyc
 /LabReport.Server/LabReport.Server.exe
 /LabReport.Client/LabReport.Client.exe
+/LabReport.Server/labreport.sqlite

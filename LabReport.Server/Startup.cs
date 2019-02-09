@@ -42,7 +42,7 @@ namespace LabReport.Server
             });
 
             services.AddDbContext<LabReportServerContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("LabReportServerContext")));
+                    options.UseSqlite(Configuration.GetConnectionString("LabReportServerContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
