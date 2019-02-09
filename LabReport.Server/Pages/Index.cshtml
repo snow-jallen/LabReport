@@ -1,0 +1,60 @@
+﻿@page
+@model LabReport.Server.Pages.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ReportItem[0].HostName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReportItem[0].SerialNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReportItem[0].MacNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReportItem[0].ImageVersionContent)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReportItem[0].ReportTime)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.ReportItem) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.HostName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SerialNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MacNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ImageVersionContent)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReportTime)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
