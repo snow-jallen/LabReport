@@ -1,4 +1,5 @@
 ﻿using LabReport.Shared;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.IO;
@@ -13,6 +14,13 @@ namespace LabReport.Client
         {
             Console.WriteLine("Hi there.");
 
+            var config = new ConfigurationBuilder()
+                .AddCommandLine(args)
+                .Build();
+
+            var host = config["host"] ?? "localhost";
+            var port = config["port"] ?? "5000";
+
             var imageVersionPath = @"c:\imageversion.txt";
             var imageVersionContent = "[ Not Found ]";
             if(File.Exists(imageVersionPath))
@@ -20,8 +28,6 @@ namespace LabReport.Client
                 imageVersionContent = File.ReadAllText(imageVersionPath);
             }
 
-            var host = "localhost";
-            var port = 5000;
             var requestUri = $"http://{host}:{port}/api/ReportItems";
             var reportItem = new ReportItem()
             {

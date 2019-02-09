@@ -259,3 +259,5 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/LabReport.Server/LabReport.Server.exe
+/LabReport.Client/LabReport.Client.exe
