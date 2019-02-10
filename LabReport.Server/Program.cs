@@ -19,6 +19,7 @@ namespace LabReport.Server
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .UseUrls("http://0.0.0.0:5000","http://smartdeploy.ad.snow.edu:5000")
                 .UseStartup<Startup>();
     }
 }
