@@ -2,9 +2,13 @@
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
+using System.Linq;
 using System.IO;
 using System.Net.Http;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
+using System.Management;
+using System.Collections.Generic;
 
 namespace LabReport.Client
 {
@@ -18,7 +22,7 @@ namespace LabReport.Client
                 .AddCommandLine(args)
                 .Build();
 
-            var host = config["host"] ?? "localhost";
+            var host = config["host"] ?? "smartdeploy.ad.snow.edu";
             var port = config["port"] ?? "5000";
 
             var imageVersionPath = @"c:\imageversion.txt";
@@ -34,8 +38,8 @@ namespace LabReport.Client
                 HostName = Environment.MachineName,
                 ImageVersionContent = imageVersionContent,
                 ReportTime = DateTime.Now,
-                SerialNumber = "???",
-                MacNumber = "???"
+                SerialNumber = getSerialNumber(),
+                MacNumber = getMacAddress()
             };
             var stringifiedValue = JsonConvert.SerializeObject(reportItem);
             
@@ -55,6 +59,45 @@ namespace LabReport.Client
                     Console.Write($"Whoops!\n{ex}");
                 }
             }
+        }
+
+        private static string getSerialNumber()
+        {
+            var serialNumber = "???";
+            try
+            {
+                using (var searcher = new ManagementObjectSearcher("SELECT Product, SerialNumber FROM Win32_BaseBoard"))
+                {
+                    var information = searcher.Get();
+                    var values = new List<string>();
+                    foreach (var obj in information)
+                    {
+                        foreach (var data in obj.Properties)
+                        {
+                            if(data.Name.IndexOf("Serial", StringComparison.CurrentCultureIgnoreCase) >= 0)
+                                values.Add(data.Value.ToString());
+                        }
+                    }
+                    serialNumber = String.Join("<br/>", values);
+                }
+            }
+            catch { }
+            return serialNumber;
+        }
+
+        private static string getMacAddress()
+        {
+            var mac = "???";
+
+            try
+            {
+                mac = String.Join("\n", NetworkInterface.GetAllNetworkInterfaces()
+                                                        .Where(i=>i.Name == "Ethernet")
+                                                        .Select(i => i.GetPhysicalAddress().ToString()));
+            }
+            catch { }
+
+            return mac;
         }
     }
 }
