@@ -9,6 +9,7 @@ using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using System.Management;
 using System.Collections.Generic;
+using LabReport.Shared;
 
 namespace LabReport.Client
 {
@@ -24,15 +25,16 @@ namespace LabReport.Client
 
             var host = config["host"] ?? "smartdeploy.ad.snow.edu";
             var port = config["port"] ?? "5000";
+            var requestUri = $"http://{host}:{port}";
 
             var imageVersionPath = @"c:\imageversion.txt";
             var imageVersionContent = "[ Not Found ]";
-            if(File.Exists(imageVersionPath))
+            if (File.Exists(imageVersionPath))
             {
                 imageVersionContent = File.ReadAllText(imageVersionPath);
             }
 
-            var requestUri = $"http://{host}:{port}/api/ReportItems";
+
             var reportItem = new ReportItem()
             {
                 HostName = Environment.MachineName,
@@ -41,24 +43,37 @@ namespace LabReport.Client
                 SerialNumber = getSerialNumber(),
                 MacNumber = getMacAddress()
             };
-            var stringifiedValue = JsonConvert.SerializeObject(reportItem);
-            
+
             using (var client = new HttpClient())
             {
                 try
                 {
                     Console.WriteLine($"Posting to {requestUri}...");
-                    var content = new StringContent(stringifiedValue, System.Text.Encoding.UTF8, "application/json");
-                    var response = await client.PostAsync(requestUri, content);
-
+                    var response = await reportViaClient(requestUri, reportItem, client);
+                    //await reportDirect(host, port, imageVersionContent, client);
                     Console.WriteLine(response);
                     Console.WriteLine("All done. :)");
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Console.Write($"Whoops!\n{ex}");
                 }
             }
+        }
+
+        private static async Task<ReportItem> reportViaClient(string requestUri, ReportItem reportItem, HttpClient httpClient)
+        {
+            var apiClient = new Shared.Client(requestUri, httpClient);
+
+            return await apiClient.PostReportItemAsync(reportItem);
+        }
+
+        private static async Task reportDirect(string requestUri, ReportItem reportItem, HttpClient client)
+        {
+            var stringifiedValue = JsonConvert.SerializeObject(reportItem);
+
+            var content = new StringContent(stringifiedValue, System.Text.Encoding.UTF8, "application/json");
+            var response = await client.PostAsync(requestUri + "/api/ReportItems", content);
         }
 
         private static string getSerialNumber()

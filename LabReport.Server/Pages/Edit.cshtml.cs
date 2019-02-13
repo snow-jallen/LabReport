@@ -54,7 +54,7 @@ namespace LabReport.Server.Pages
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ReportItemExists(ReportItem.Id))
+                if (!ReportItemExists(ReportItem.Id??0))
                 {
                     return NotFound();
                 }
